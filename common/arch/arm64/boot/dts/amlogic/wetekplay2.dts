@@ -1020,7 +1020,7 @@
 		dev_name = "wetek-dvb";
 		status = "okay";
 		fec_reset_gpio-gpios = <&gpio GPIOY_13 GPIO_ACTIVE_HIGH>;
-        power_ctrl_gpio-gpios = <&gpio GPIOY_15 GPIO_ACTIVE_LOW>;
+		power_ctrl_gpio-gpios = <&gpio GPIOY_15 GPIO_ACTIVE_LOW>;
 		//"parallel","serial","disable"
 		ts0 = "parallel";
 		ts0_control = <0>;
