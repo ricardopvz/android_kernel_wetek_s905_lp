@@ -1958,12 +1958,18 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 			err = -ENOMEM;
 			goto out;
 		}
-
+#ifdef CONFIG_COMPAT
+		if (copy_from_user(tvp, compat_ptr((unsigned long)tvps->props),
+				tvps->num * sizeof(struct dtv_property))) {
+			err = -EFAULT;
+			goto out;
+		}
+#else
 		if (copy_from_user(tvp, tvps->props, tvps->num * sizeof(struct dtv_property))) {
 			err = -EFAULT;
 			goto out;
 		}
-
+#endif
 		for (i = 0; i < tvps->num; i++) {
 			err = dtv_property_process_set(fe, tvp + i, file);
 			if (err < 0)
@@ -1991,12 +1997,18 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 			err = -ENOMEM;
 			goto out;
 		}
-
+#ifdef CONFIG_COMPAT
+		if (copy_from_user(tvp, compat_ptr((unsigned long)tvps->props),
+				tvps->num * sizeof(struct dtv_property))) {
+			err = -EFAULT;
+			goto out;
+		}
+#else
 		if (copy_from_user(tvp, tvps->props, tvps->num * sizeof(struct dtv_property))) {
 			err = -EFAULT;
 			goto out;
 		}
-
+#endif
 		/*
 		 * Fills the cache out struct with the cache contents, plus
 		 * the data retrieved from get_frontend, if the frontend
@@ -2013,12 +2025,18 @@ static int dvb_frontend_ioctl_properties(struct file *file,
 				goto out;
 			(tvp + i)->result = err;
 		}
-
+#ifdef CONFIG_COMPAT
+		if (copy_to_user(compat_ptr((unsigned long)tvps->props), tvp,
+				tvps->num * sizeof(struct dtv_property))) {
+			err = -EFAULT;
+			goto out;
+		}
+#else
 		if (copy_to_user(tvps->props, tvp, tvps->num * sizeof(struct dtv_property))) {
 			err = -EFAULT;
 			goto out;
 		}
-
+#endif
 	} else
 		err = -EOPNOTSUPP;
 
@@ -2536,6 +2554,18 @@ static int dvb_frontend_release(struct inode *inode, struct file *file)
 	return ret;
 }
 
+#ifdef CONFIG_COMPAT
+static long dvb_frontend_compat_ioctl(struct file *filp,
+			unsigned int cmd, unsigned long args)
+{
+	unsigned long ret;
+
+	args = (unsigned long)compat_ptr(args);
+	ret = dvb_generic_ioctl(filp, cmd, args);
+	return ret;
+}
+#endif
+
 static const struct file_operations dvb_frontend_fops = {
 	.owner		= THIS_MODULE,
 	.unlocked_ioctl	= dvb_generic_ioctl,
@@ -2543,6 +2573,9 @@ static const struct file_operations dvb_frontend_fops = {
 	.open		= dvb_frontend_open,
 	.release	= dvb_frontend_release,
 	.llseek		= noop_llseek,
+#ifdef CONFIG_COMPAT
+	.compat_ioctl	= dvb_frontend_compat_ioctl,
+#endif
 };
 
 int dvb_frontend_suspend(struct dvb_frontend *fe)
