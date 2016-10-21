@@ -1016,8 +1016,11 @@
 
 
 	dvb {
-		compatible = "amlogic, dvb";
-		dev_name = "dvb";
+		compatible = "amlogic,dvb";
+		dev_name = "wetek-dvb";
+		status = "okay";
+		fec_reset_gpio-gpios = <&gpio GPIOY_13 GPIO_ACTIVE_HIGH>;
+        power_ctrl_gpio-gpios = <&gpio GPIOY_15 GPIO_ACTIVE_LOW>;
 		//"parallel","serial","disable"
 		ts0 = "parallel";
 		ts0_control = <0>;
@@ -1031,7 +1034,7 @@
 				&clock GCLK_IDX_HIU_PARSER_TOP>;
 		reset-names = "demux", "asyncfifo", "ahbarb0", "uparsertop";
 	};
-	dvbfe {
+/*	dvbfe {
 		compatible = "amlogic, dvbfe";
 		dev_name = "dvbfe";
 		dtv_demod0 = "cxd2837";
@@ -1042,7 +1045,7 @@
 		fe0_dtv_demod = <0>;
 		fe0_ts = <0>;
 		fe0_dev = <0>;
-	};
+	};*/
 };
 &i2c_a {
   status = "okay";
@@ -1070,12 +1073,6 @@
 		amlogic,clrmask=<3 0x803280
 				4 0xc0>;
 		amlogic,pins ="GPIOX_8", "GPIOX_9", "GPIOX_10", "GPIOX_11";
-	};
-	smc_pins:smc_pins{
-		amlogic,setmask = <4 0x000000c0>;
-		/* amlogic,clrmask = <3 0x78803280>;*/
-		amlogic,clrmask = <3 0x60000280>; 
-		amlogic,pins = "GPIOX_8","GPIOX_9";
 	};
 };
 
