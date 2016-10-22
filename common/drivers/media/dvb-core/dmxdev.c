@@ -31,6 +31,10 @@
 #include <asm/uaccess.h>
 #include "dmxdev.h"
 
+#ifdef CONFIG_COMPAT
+#include "dvb-compat-ioctl32.h"
+#endif
+
 static int debug;
 
 module_param(debug, int, 0644);
@@ -1097,7 +1101,7 @@ static int dvb_demux_do_ioctl(struct file *file,
 	return ret;
 }
 
-static long dvb_demux_ioctl(struct file *file, unsigned int cmd,
+long dvb_demux_ioctl(struct file *file, unsigned int cmd,
 			    unsigned long arg)
 {
 	return dvb_usercopy(file, cmd, arg, dvb_demux_do_ioctl);
@@ -1147,17 +1151,6 @@ static int dvb_demux_release(struct inode *inode, struct file *file)
 	return ret;
 }
 
-#ifdef CONFIG_COMPAT
-static long dvb_demux_compat_ioctl(struct file *filp,
-			unsigned int cmd, unsigned long args)
-{
-	unsigned long ret;
-	args = (unsigned long)compat_ptr(args);
-	ret = dvb_demux_ioctl(filp, cmd, args);
-	return ret;
-}
-#endif
-
 static const struct file_operations dvb_demux_fops = {
 	.owner = THIS_MODULE,
 	.read = dvb_demux_read,
@@ -1202,7 +1195,7 @@ static int dvb_dvr_do_ioctl(struct file *file,
 	return ret;
 }
 
-static long dvb_dvr_ioctl(struct file *file,
+long dvb_dvr_ioctl(struct file *file,
 			 unsigned int cmd, unsigned long arg)
 {
 	return dvb_usercopy(file, cmd, arg, dvb_dvr_do_ioctl);
@@ -1229,18 +1222,6 @@ static unsigned int dvb_dvr_poll(struct file *file, poll_table *wait)
 
 	return mask;
 }
-
-#ifdef CONFIG_COMPAT
-static long dvb_dvr_compat_ioctl(struct file *filp,
-			unsigned int cmd, unsigned long args)
-{
-	unsigned long ret;
-
-	args = (unsigned long)compat_ptr(args);
-	ret = dvb_dvr_ioctl(filp, cmd, args);
-	return ret;
-}
-#endif
 
 static const struct file_operations dvb_dvr_fops = {
 	.owner = THIS_MODULE,

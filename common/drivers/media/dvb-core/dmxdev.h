@@ -116,4 +116,9 @@ struct dmxdev {
 int dvb_dmxdev_init(struct dmxdev *dmxdev, struct dvb_adapter *);
 void dvb_dmxdev_release(struct dmxdev *dmxdev);
 
+long dvb_demux_ioctl(struct file *file, unsigned int cmd,
+			    unsigned long arg);
+long dvb_dvr_ioctl(struct file *file,
+			 unsigned int cmd, unsigned long arg);
+
 #endif /* _DMXDEV_H_ */
