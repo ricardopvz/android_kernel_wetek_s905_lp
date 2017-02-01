@@ -1624,11 +1624,11 @@ static int avl6211_set_frontend(struct dvb_frontend* fe)
 		
 	/* Wait a bit more when we have slow symbol rates */
 	if (c->symbol_rate < 5000000)
-		max_time = 5000*2; /* Max waiting time: 1000ms */
+		max_time = 1000; /* Max waiting time: 1000ms */
 	else if (c->symbol_rate < 10000000)
-		max_time = 600*2;  /* Max waiting time: 600ms */
+		max_time = 600;  /* Max waiting time: 600ms */
 	else
-		max_time = 250*2;  /* Max waiting time: 250ms */
+		max_time = 250;  /* Max waiting time: 250ms */
 
 	cnt = max_time / 10;
 	do {
